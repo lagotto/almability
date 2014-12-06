@@ -14,6 +14,10 @@ SAMPLE = 10
 
 require_relative 'lib/network'
 
+before do
+  headers "Content-Type" => "application/json; charset=utf8"
+end
+
 get "/heartbeat" do
   { "status" => "ok" }.to_json
 end
