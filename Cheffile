@@ -9,3 +9,5 @@ cookbook "ruby",
          :git => "git@github.com:articlemetrics/ruby-cookbook.git"
 cookbook "dotenv",
          :git => "git@github.com:articlemetrics/dotenv-cookbook.git"
+cookbook "passenger_nginx",
+         :git => "git@github.com:articlemetrics/passenger_nginx-cookbook.git"
