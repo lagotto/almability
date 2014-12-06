@@ -2,6 +2,7 @@ SITE
   remote: http://community.opscode.com/api/v1
   specs:
     apt (2.6.0)
+    capistrano (0.7.0)
 
 GIT
   remote: git@github.com:articlemetrics/almability-cookbook.git
