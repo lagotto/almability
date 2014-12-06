@@ -1,0 +1,11 @@
+## !/usr/bin/env ruby
+# ^syntax detection
+
+site 'http://community.opscode.com/api/v1'
+
+cookbook "almability",
+         :git => "git@github.com:articlemetrics/almability-cookbook.git"
+cookbook "ruby",
+         :git => "git@github.com:articlemetrics/ruby-cookbook.git"
+cookbook "dotenv",
+         :git => "git@github.com:articlemetrics/dotenv-cookbook.git"
