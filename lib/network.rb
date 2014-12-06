@@ -52,30 +52,14 @@ end
 def rescue_faraday_error(url, error, options={})
   if error.is_a?(Faraday::ResourceNotFound)
     status = 404
-    if error.response.blank? && error.response[:body].blank?
+    if error.response.nil? && error.response[:body].nil?
       { error: "resource not found", status: status }
     # we raise an error if we find a canonical URL mismatch
     elsif options[:doi_mismatch]
-      work = Work.where(id: options[:work_id]).first
-      Notification.create(exception: error.exception,
-                          class_name: "Net::HTTPNotFound",
-                          message: error.response[:message],
-                          details: error.response[:body],
-                          status: status,
-                          work_id: work.id,
-                          target_url: url)
       { error: error.response[:message], status: status }
     # we raise an error if a DOI can't be resolved
     elsif options[:doi_lookup]
-      work = Work.where(id: options[:work_id]).first
-      Notification.create(exception: error.exception,
-                          class_name: "Net::HTTPNotFound",
-                          message: "DOI #{work.doi} could not be resolved",
-                          details: error.response[:body],
-                          status: status,
-                          work_id: work.id,
-                          target_url: url)
-      { error: "DOI #{work.doi} could not be resolved", status: status }
+      { error: "DOI #{url} could not be resolved", status: status }
     else
       error = parse_error_response(error.response[:body])
       { error: error, status: status }
@@ -87,7 +71,7 @@ def rescue_faraday_error(url, error, options={})
       status = 408
     elsif error.respond_to?('status')
       status = error[:status]
-    elsif error.respond_to?('response') && error.response.present?
+    elsif error.respond_to?('response') && !error.response.nil?
       status = error.response[:status]
       details = error.response[:body]
     else
@@ -107,15 +91,6 @@ def rescue_faraday_error(url, error, options={})
     message = "#{message} for #{url}"
     message = "#{message} with rev #{options[:data][:rev]}" if class_name == Net::HTTPConflict
 
-    Notification.create(exception: exception,
-                        class_name: class_name.to_s,
-                        message: message,
-                        details: details,
-                        status: status,
-                        target_url: url,
-                        level: level,
-                        work_id: options[:work_id],
-                        agent_id: options[:agent_id])
     { error: message, status: status }
   end
 end
@@ -197,31 +172,31 @@ def get_canonical_url(url, options = {})
     body_url = body_url.sub("reload=true&", "")
   end
 
-  url = response.env[:url].to_s
-  if url
+  head_url = response.env[:url].to_s
+  if head_url
     # remove percent encoding
-    url = CGI.unescape(url)
+    head_url = CGI.unescape(head_url)
 
     # make URL lowercase
-    url = url.downcase
+    head_url = head_url.downcase
 
     # remove jsessionid used by J2EE servers
-    url = url.gsub(/(.*);jsessionid=.*/, '\1')
+    head_url = head_url.gsub(/(.*);jsessionid=.*/, '\1')
 
     # remove parameter used by IEEE
-    url = url.sub("reload=true&", "")
+    head_url = head_url.sub("reload=true&", "")
 
     # remove parameter used by ScienceDirect
-    url = url.sub("?via=ihub", "")
+    head_url = head_url.sub("?via=ihub", "")
   end
 
   # get relative URL
-  path = URI.split(url)[5]
+  path = URI.split(head_url)[5]
 
   # we will raise an error if 1. or 2. doesn't match with 3. as this confuses Facebook
-  if body_url.present? && ![url, path].include?(body_url)
+  if !body_url.nil? && ![head_url, path].include?(body_url)
     options[:doi_mismatch] = true
-    response.env[:message] = "Canonical URL mismatch: #{body_url} for #{url}"
+    response.env[:message] = "Canonical URL mismatch: #{body_url} for #{head_url}"
     fail Faraday::ResourceNotFound, response.env
   end
 

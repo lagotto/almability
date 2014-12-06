@@ -1,6 +1,7 @@
 require "bundler/setup"
 require "sinatra"
 require "json"
+require "nokogiri"
 require 'faraday'
 require 'faraday_middleware'
 require 'typhoeus'
@@ -35,12 +36,28 @@ get "/members/:id/works" do
   response = get_result(url)
   items = response.fetch("message", {}).fetch("items", [])
   items = items.map do |item|
+    item_response = get_canonical_url("http://doi.org/#{item["DOI"]}")
+    if item_response.is_a?(String)
+      url = item_response
+      error = nil
+      status = 200
+    else
+      # an error occured
+      url = nil
+      error = item_response.fetch(:error, nil)
+      status = item_response.fetch(:status, nil)
+    end
+
     { "doi" => item["DOI"],
-      "response" => get_canonical_url("http://doi.org/#{item["DOI"]}") }
+      "url" => url,
+      "error" => error,
+      "status" => status }
   end
 
-  { "status" => "ok",
+  payload = {
+    "status" => "ok",
     "message-type" => "work-list",
     "message-version" => "1.0.0",
-    "message" => items }.to_json
+    "message" => items }
+  JSON.pretty_generate(payload)
 end
