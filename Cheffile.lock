@@ -2,14 +2,16 @@ SITE
   remote: http://community.opscode.com/api/v1
   specs:
     apt (2.6.0)
+    capistrano (0.7.0)
 
 GIT
   remote: git@github.com:articlemetrics/almability-cookbook.git
   ref: master
-  sha: 8e1a6b539e387f2f5f3bae7a40f884fc537ecc11
+  sha: d0a6df3c59b907c22fc94403dd3fc6c9a97d8f7d
   specs:
-    almability (0.1.6)
+    almability (0.1.7)
       apt (>= 0.0.0)
+      capistrano (~> 0.7.0)
       dotenv (~> 0.1.0)
       passenger_nginx (~> 0.4.0)
       ruby (~> 0.6.0)
@@ -40,6 +42,7 @@ GIT
 
 DEPENDENCIES
   almability (>= 0)
+  capistrano (>= 0)
   dotenv (>= 0)
   passenger_nginx (>= 0)
   ruby (>= 0)
