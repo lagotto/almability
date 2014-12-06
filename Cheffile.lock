@@ -17,6 +17,14 @@ GIT
       ruby (~> 0.6.0)
 
 GIT
+  remote: git@github.com:articlemetrics/capistrano-cookbook.git
+  ref: master
+  sha: 62ddb7b644f54614d3e52dd06a834e59df0b8903
+  specs:
+    capistrano (0.7.5)
+      ruby (~> 0.6.0)
+
+GIT
   remote: git@github.com:articlemetrics/dotenv-cookbook.git
   ref: master
   sha: 069ee5080bebea6c5049462d832503a14a340570
