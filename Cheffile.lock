@@ -6,9 +6,9 @@ SITE
 GIT
   remote: git@github.com:articlemetrics/almability-cookbook.git
   ref: master
-  sha: a0d0865871d372568692ff2aae1a3e1741a3136b
+  sha: efbe4e9e1368b589f5fecd115bb1ab0f38d9ae2d
   specs:
-    almability (0.1.2)
+    almability (0.1.3)
       apt (>= 0.0.0)
       ruby (~> 0.6.0)
 
